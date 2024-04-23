@@ -1,4 +1,5 @@
 mod project_generator;
+mod popular_crates;
 
 use std::env;
 
