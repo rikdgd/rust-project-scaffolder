@@ -3,6 +3,8 @@ mod popular_crates;
 
 use std::env;
 
+use project_generator::{generate_project, ProjectType};
+
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -16,6 +18,10 @@ fn main() {
             println!("Wrong amount of arguments provided!");
         },
     }
+    
+    // testing
+    generate_project("generated-project", ProjectType::Websocket)
+        .expect("Failed to generate project");
 }
 
 

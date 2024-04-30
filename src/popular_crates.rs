@@ -1,4 +1,8 @@
-pub enum PopularCrates {
+use std::fs::File;
+use std::io::Write;
+
+
+pub enum RustCrates {
     Syn,
     Quote,
     Libc,
@@ -9,18 +13,23 @@ pub enum PopularCrates {
     Rocket,
     Tungstenite,
 }
-impl PopularCrates {
-    pub fn get_import_string(&self) -> String {
+impl RustCrates {
+    pub fn get_import_string(&self) -> &str {
         match self {
-            Self::Syn => "syn = \"2.0\"".to_string(),
-            Self::Quote => "quote = \"1.0\"".to_string(),
-            Self::Libc => "libc = \"0.2\"".to_string(),
-            Self::Rand => "rand = \"0.8.4\"".to_string(),
-            Self::Serde => "serde = { version = \"1.0\", features = [\"derive\"] }".to_string(),
-            Self::SerdeJson => "serde_json = \"1.0\"".to_string(),
-            Self::Bytes => "bytes = \"1\"".to_string(),
-            Self::Rocket => "rocket = \"0.5.0\"".to_string(),
-            Self::Tungstenite => "tungstenite = \"0.21.0\"".to_string(),
+            Self::Syn => "syn = \"2.0\"",
+            Self::Quote => "quote = \"1.0\"",
+            Self::Libc => "libc = \"0.2\"",
+            Self::Rand => "rand = \"0.8.4\"",
+            Self::Serde => "serde = { version = \"1.0\", features = [\"derive\"] }",
+            Self::SerdeJson => "serde_json = \"1.0\"",
+            Self::Bytes => "bytes = \"1\"",
+            Self::Rocket => "rocket = \"0.5.0\"",
+            Self::Tungstenite => "tungstenite = \"0.21.0\"",
         }
+    }
+    
+    pub fn append_import_to_file(&self, file: &mut File) {
+        let import_string = self.get_import_string();
+        file.write_all(import_string.as_bytes());
     }
 }
