@@ -22,7 +22,7 @@ fn main() {
     }
     
     // testing
-    let generator = ProjectGenerator::new("/generated-project");
+    let generator = ProjectGenerator::new("./generated-project");
     generator.generate_project(ProjectType::Websocket).expect("Failed to generate project");
 }
 
