@@ -31,8 +31,7 @@ impl RustCrates {
     
     pub fn append_import_to_file(&self, file: &mut File) {
         let import_string = self.get_import_string();
-        file.write_all(import_string.as_bytes()).expect(
-            format!("Failed to write import string to cargo.toml: {}", import_string).as_str()
-        );
+        file.write_all(import_string.as_bytes())
+            .expect("Failed to write import string to Cargo.toml.");
     }
 }

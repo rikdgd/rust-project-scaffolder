@@ -1,27 +1,27 @@
-use crate::rust_crates::RustCrates;
-use std::fs::File;
+use crate::project_type::ProjectType;
+use std::fs::OpenOptions;
 use std::process::Command;
 use std::error::Error;
 
 
-#[allow(unused)]
-pub enum ProjectType {
-    Websocket,
-    RestApi,
-    MongodbRepository,
-    DesktopApp,
-    Game,
+
+pub struct ProjectGenerator {
+    path: String,
 }
-impl ProjectType {
-    pub fn get_required_crates(&self) -> Vec<RustCrates> {
-        let mut crates_buffer: Vec<RustCrates> = Vec::new();
-        
-        match self {
+impl ProjectGenerator {
+    pub fn new(project_path: &str) -> ProjectGenerator{
+        ProjectGenerator {
+            path: String::from(project_path),
+        }
+    }
+    
+    pub fn generate_project(&self, project_type: ProjectType) -> Result<(), Box<dyn Error>> {
+        match project_type {
             ProjectType::Websocket => {
-                crates_buffer.push(RustCrates::Tungstenite);
+                self.generate_websocket_project()
             },
             ProjectType::RestApi => {
-                crates_buffer.push(RustCrates::Rocket);
+                todo!()
             },
             ProjectType::MongodbRepository => {
                 todo!()
@@ -33,55 +33,37 @@ impl ProjectType {
                 todo!()
             },
         }
+    }
+    
+    fn create_vanilla_project(&self) -> Result<(), &'static str> {
+        let output = {
+            Command::new("cargo")
+            .arg("new").arg(&self.path)
+            .output()
+        };
         
-        crates_buffer
-    }
-}
-
-pub fn generate_project(name: &str, project_type: ProjectType) -> Result<(), Box<dyn Error>> {
-    match project_type {
-        ProjectType::Websocket => {
-            generate_websocket_project(name)
-        },
-        ProjectType::RestApi => {
-            todo!()
-        },
-        ProjectType::MongodbRepository => {
-            todo!()
-        },
-        ProjectType::DesktopApp => {
-            todo!()
-        },
-        ProjectType::Game => {
-            todo!()
-        },
-    }
-}
-
-fn create_vanilla_project(name: &str) -> Result<(), &'static str> {
-    let output = {
-        Command::new("cargo")
-        .arg("new").arg(name)
-        .output()
-    };
-    
-    match output {
-        Ok(_) => Ok(()),
-        Err(_) => {
-            Err("Failed to create a basic rust project. Is cargo installed and added to PATH?")
-        },
-    }
-}
-
-fn generate_websocket_project(name: &str) -> Result<(), Box<dyn Error>> {
-    create_vanilla_project(name)?;
-    
-    let required_packages = ProjectType::Websocket.get_required_crates();
-    let mut cargo_toml = File::open(format!("./{name}/Cargo.toml"))?;
-    
-    for rust_crate in required_packages {
-        rust_crate.append_import_to_file(&mut cargo_toml);
+        match output {
+            Ok(_) => Ok(()),
+            Err(_) => {
+                Err("Failed to create a basic rust project. Is cargo installed and added to PATH?")
+            },
+        }
     }
     
-    Ok(())
+    fn generate_websocket_project(&self) -> Result<(), Box<dyn Error>> {
+        self.create_vanilla_project()?;
+        
+        let required_packages = ProjectType::Websocket.get_required_crates();
+        let mut cargo_toml = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(format!("{}/Cargo.toml", self.path))
+            .expect("Failed to open Cargo.toml file.");
+        
+        for rust_crate in required_packages {
+            rust_crate.append_import_to_file(&mut cargo_toml);
+        }
+        
+        Ok(())
+    }
 }

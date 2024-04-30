@@ -1,9 +1,11 @@
 mod project_generator;
 mod rust_crates;
+mod project_type;
 
 use std::env;
 
-use project_generator::{generate_project, ProjectType};
+use project_generator::ProjectGenerator;
+use project_type::ProjectType;
 
 
 fn main() {
@@ -15,13 +17,13 @@ fn main() {
             println!("Target project: {}", config.target_project);
         },
         None => {
-            println!("Wrong amount of arguments provided!");
+            println!("Wrong amount of arguments provided.");
         },
     }
     
     // testing
-    generate_project("generated-project", ProjectType::Websocket)
-        .expect("Failed to generate project");
+    let generator = ProjectGenerator::new("/generated-project");
+    generator.generate_project(ProjectType::Websocket).expect("Failed to generate project");
 }
 
 
