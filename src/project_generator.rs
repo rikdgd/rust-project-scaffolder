@@ -1,10 +1,10 @@
-use crate::popular_crates::{self, RustCrates};
+use crate::rust_crates::RustCrates;
 use std::fs::File;
-use std::io::{Read, Write};
 use std::process::Command;
 use std::error::Error;
 
 
+#[allow(unused)]
 pub enum ProjectType {
     Websocket,
     RestApi,
