@@ -54,7 +54,7 @@ impl Config {
                 let target_project = &args[1];
                 let project_name = &args[2];
                 
-                if project_name.starts_with(".") || project_name.starts_with("/") {
+                if project_name.starts_with('.') || project_name.starts_with('/') {
                     Some(Config { 
                         target_project: target_project.clone(),
                         path: project_name.clone(),
