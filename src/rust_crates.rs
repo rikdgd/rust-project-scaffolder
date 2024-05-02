@@ -29,6 +29,7 @@ impl RustCrates {
         }
     }
     
+    /// Appends the packages import string to the provided File, usually './project-name/Cargo.toml'.
     pub fn append_import_to_file(&self, file: &mut File) {
         let import_string = self.get_import_string();
         file.write_all(import_string.as_bytes())

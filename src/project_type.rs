@@ -12,6 +12,17 @@ pub enum ProjectType {
     Game,
 }
 impl ProjectType {
+    pub fn from_str(type_str: &str) -> Result<ProjectType, &'static str> {
+        match type_str {
+            "websocket" => Ok(ProjectType::Websocket),
+            "restapi" => Ok(ProjectType::RestApi),
+            "mongorepo" => Ok(ProjectType::MongodbRepository),
+            "desktop" => Ok(ProjectType::DesktopApp),
+            "game" => Ok(ProjectType::Game),
+            _ => Err("Provided project type is incorrect."),
+        }
+    }
+    
     pub fn get_required_crates(&self) -> Vec<RustCrates> {
         let mut crates_buffer: Vec<RustCrates> = Vec::new();
         

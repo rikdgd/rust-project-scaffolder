@@ -14,29 +14,58 @@ fn main() {
     
     match config {
         Some(config) => {
-            println!("Target project: {}", config.target_project);
+            println!("Config:\n{:?}", config);
+            let generator = ProjectGenerator::from_config(config);
+            generator.generate_project().expect("Failed to generate project from config.");
         },
         None => {
-            println!("Wrong amount of arguments provided.");
+            println!("No arguments provided, starting guided setup...");
+            
+            // testing
+            let generator = ProjectGenerator::new(
+                "./generated-project", 
+                ProjectType::Websocket,
+            );
+            generator.generate_project().expect("Failed to generate testing project");
         },
     }
-    
-    // testing
-    let generator = ProjectGenerator::new("./generated-project");
-    generator.generate_project(ProjectType::Websocket).expect("Failed to generate project");
+
 }
 
 
 
-struct Config {
-    target_project: String,
+#[derive(Debug)]
+pub struct Config {
+    pub target_project: String,
+    pub path: String,
 }
 
 impl Config {
     fn from_args(args: Vec<String>) -> Option<Config> {
         match args.len() {
             1 => None, 
-            2 => Some(Config {target_project: String::from(&args[1])}),
+            2 => {
+                Some(Config {
+                    target_project: String::from(&args[1]),
+                    path: format!("./new-{}-project", &args[1]),
+                })
+            },
+            3 => {
+                let target_project = &args[1];
+                let project_name = &args[2];
+                
+                if project_name.starts_with(".") || project_name.starts_with("/") {
+                    Some(Config { 
+                        target_project: target_project.clone(),
+                        path: project_name.clone(),
+                    })
+                } else {
+                    Some(Config {
+                        target_project: target_project.clone(),
+                        path: format!("./{}", project_name),
+                    })
+                }
+            }
             _ => None,
         }
     }
