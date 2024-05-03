@@ -31,24 +31,23 @@ impl ProjectGenerator {
         }
     }
     
-    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {
-        match self.project_type {
-            ProjectType::Websocket => {
-                self.generate_websocket_project()
-            },
-            ProjectType::RestApi => {
-                todo!()
-            },
-            ProjectType::MongodbRepository => {
-                todo!()
-            },
-            ProjectType::DesktopApp => {
-                todo!()
-            },
-            ProjectType::Game => {
-                todo!()
-            },
+    
+    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {      
+        self.create_vanilla_project()?;
+        
+        let required_crates = self.project_type.get_required_crates();
+        let mut cargo_toml = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(format!("{}/Cargo.toml", self.path))?;
+        
+        for rust_crate in required_crates {
+            rust_crate.append_import_to_file(&mut cargo_toml);
         }
+        
+        self.project_type.adjust_source_files(&self.path);
+        
+        Ok(())
     }
     
     fn create_vanilla_project(&self) -> Result<(), &'static str> {
@@ -64,24 +63,5 @@ impl ProjectGenerator {
                 Err("Failed to create a basic rust project. Is cargo installed and added to PATH?")
             },
         }
-    }
-    
-    fn generate_websocket_project(&self) -> Result<(), Box<dyn Error>> {
-        self.create_vanilla_project()?;
-        
-        let required_packages = ProjectType::Websocket.get_required_crates();
-        let mut cargo_toml = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(format!("{}/Cargo.toml", self.path))
-            .expect("Failed to open Cargo.toml file.");
-        
-        for rust_crate in required_packages {
-            rust_crate.append_import_to_file(&mut cargo_toml);
-        }
-        
-        ProjectType::Websocket.adjust_source_files(&self.path);
-        
-        Ok(())
     }
 }

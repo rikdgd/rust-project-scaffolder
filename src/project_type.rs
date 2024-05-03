@@ -1,5 +1,5 @@
 use crate::rust_crates::RustCrates;
-use std::fs::OpenOptions;
+use std::fs::{File, OpenOptions};
 use std::io::Write;
 
 
@@ -24,6 +24,19 @@ fn main () {
             }
         });
     }
+}
+"#;
+
+const ROCKET_MAIN: &str = r#"#[macro_use] extern crate rocket;
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build().mount("/", routes![index])
 }
 "#;
 
@@ -75,21 +88,26 @@ impl ProjectType {
     
     #[allow(unused)]
     pub fn adjust_source_files(&self, project_path: &str) {
+        println!("Adjusting source file for: '{project_path}'");
+        
+        let adjust_main_file = |project_path: &str, new_content: &str| {
+            let mut main_rs = OpenOptions::new()
+                .write(true)
+                .append(true)
+                .open(format!("{project_path}/src/main.rs"))
+                .expect("Failed to open main.rs file."); 
+            
+            main_rs.set_len(0).expect("Failed to clear the main.rs file.");
+            main_rs.write_all(new_content.as_bytes())
+                .expect("Failed to adjust main.rs file.");
+        };
+        
         match self {
             ProjectType::Websocket => {
-                let mut main_rs = OpenOptions::new()
-                    .write(true)
-                    .append(true)
-                    .open(format!("./{project_path}/src/main.rs"))
-                    .expect("Failed to open main.rs file.");
-                
-                // Clear the main.rs file, then write the new content to it.
-                main_rs.set_len(0).expect("Failed to clear the main.rs file.");
-                main_rs.write_all(TUNGSTENITE_MAIN.as_bytes())
-                    .expect("Failed to adjust main.rs file.");
+                adjust_main_file(project_path, TUNGSTENITE_MAIN);
             },
             ProjectType::RestApi => {
-                todo!()
+                adjust_main_file(project_path, ROCKET_MAIN);
             },
             ProjectType::MongodbRepository => {
                 todo!()
