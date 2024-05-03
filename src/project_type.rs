@@ -1,5 +1,5 @@
 use crate::rust_crates::RustCrates;
-use std::fs::{File, OpenOptions};
+use std::fs::OpenOptions;
 use std::io::Write;
 
 
