@@ -80,6 +80,8 @@ impl ProjectGenerator {
             rust_crate.append_import_to_file(&mut cargo_toml);
         }
         
+        ProjectType::Websocket.adjust_source_files(&self.path);
+        
         Ok(())
     }
 }
