@@ -1,6 +1,7 @@
 mod project_generator;
 mod rust_crates;
 mod project_type;
+mod file_modification;
 
 use std::env;
 

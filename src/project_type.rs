@@ -1,47 +1,9 @@
 use crate::rust_crates::RustCrates;
-use std::fs::OpenOptions;
-use std::io::Write;
+use crate::file_modification::*;
 
 
 
-const TUNGSTENITE_MAIN: &str = r#"use std::net::TcpListener;
-use std::thread::spawn;
-use tungstenite::accept;
-
-/// A WebSocket echo server
-fn main () {
-    let server = TcpListener::bind("127.0.0.1:9001").unwrap();
-    for stream in server.incoming() {
-        spawn (move || {
-            let mut websocket = accept(stream.unwrap()).unwrap();
-            loop {
-                let msg = websocket.read().unwrap();
-
-                // We do not want to send back ping/pong messages.
-                if msg.is_binary() || msg.is_text() {
-                    websocket.send(msg).unwrap();
-                }
-            }
-        });
-    }
-}
-"#;
-
-const ROCKET_MAIN: &str = r#"#[macro_use] extern crate rocket;
-
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
-
-#[launch]
-fn rocket() -> _ {
-    rocket::build().mount("/", routes![index])
-}
-"#;
-
-
-
+// TODO: DesktopApp
 #[allow(unused)]
 pub enum ProjectType {
     Websocket,
@@ -74,28 +36,15 @@ impl ProjectType {
                 todo!()
             },
             ProjectType::Game => {
-                todo!()
+                crates_buffer.push(RustCrates::Bevy);
             },
         }
         
         crates_buffer
     }
     
-    #[allow(unused)]
     pub fn adjust_source_files(&self, project_path: &str) {
         println!("Adjusting source file for: '{project_path}'");
-        
-        let adjust_main_file = |project_path: &str, new_content: &str| {
-            let mut main_rs = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(format!("{project_path}/src/main.rs"))
-                .expect("Failed to open main.rs file.");
-            
-            main_rs.set_len(0).expect("Failed to clear the main.rs file.");
-            main_rs.write_all(new_content.as_bytes())
-                .expect("Failed to adjust main.rs file.");
-        };
         
         match self {
             ProjectType::Websocket => {
@@ -108,8 +57,71 @@ impl ProjectType {
                 todo!()
             },
             ProjectType::Game => {
-                todo!()
+                adjust_main_file(project_path, BEVY_MAIN);
+                append_to_cargo_toml(project_path, BEVY_OPTIMIZATION);
             },
         }        
     }
+    
+    
 }
+
+
+
+const TUNGSTENITE_MAIN: &str = r#"use std::net::TcpListener;
+use std::thread::spawn;
+use tungstenite::accept;
+
+/// A WebSocket echo server
+fn main () {
+    let server = TcpListener::bind("127.0.0.1:9001").unwrap();
+    for stream in server.incoming() {
+        spawn (move || {
+            let mut websocket = accept(stream.unwrap()).unwrap();
+            loop {
+                let msg = websocket.read().unwrap();
+
+                // We do not want to send back ping/pong messages.
+                if msg.is_binary() || msg.is_text() {
+                    websocket.send(msg).unwrap();
+                }
+            }
+        });
+    }
+}
+"#;
+
+
+const ROCKET_MAIN: &str = r#"#[macro_use] extern crate rocket;
+
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build().mount("/", routes![index])
+}
+"#;
+
+
+const BEVY_MAIN: &str = r#"use bevy::prelude::*;
+
+fn main(){
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .run();
+}"#;
+
+
+const BEVY_OPTIMIZATION: &str = r#"
+
+# Enable a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+"#;

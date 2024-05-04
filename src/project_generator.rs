@@ -32,18 +32,9 @@ impl ProjectGenerator {
     }
     
     
-    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {      
+    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {    
         self.create_vanilla_project()?;
-        
-        let required_crates = self.project_type.get_required_crates();
-        let mut cargo_toml = OpenOptions::new()
-            .write(true)
-            .append(true)
-            .open(format!("{}/Cargo.toml", self.path))?;
-        
-        for rust_crate in required_crates {
-            rust_crate.append_import_to_file(&mut cargo_toml);
-        }
+        self.append_required_crates()?;
         
         self.project_type.adjust_source_files(&self.path);
         
@@ -63,5 +54,19 @@ impl ProjectGenerator {
                 Err("Failed to create a basic rust project. Is cargo installed and added to PATH?")
             },
         }
+    }
+    
+    fn append_required_crates(&self) -> Result<(), Box<dyn Error>> {
+        let required_crates = self.project_type.get_required_crates();
+        let mut cargo_toml = OpenOptions::new()
+            .write(true)
+            .append(true)
+            .open(format!("{}/Cargo.toml", self.path))?;
+        
+        for rust_crate in required_crates {
+            rust_crate.append_import_to_file(&mut cargo_toml);
+        }
+        
+        Ok(())
     }
 }
