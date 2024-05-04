@@ -46,7 +46,6 @@ fn rocket() -> _ {
 pub enum ProjectType {
     Websocket,
     RestApi,
-    MongodbRepository,
     DesktopApp,
     Game,
 }
@@ -55,7 +54,6 @@ impl ProjectType {
         match type_str {
             "websocket" => Ok(ProjectType::Websocket),
             "restapi" => Ok(ProjectType::RestApi),
-            "mongorepo" => Ok(ProjectType::MongodbRepository),
             "desktop" => Ok(ProjectType::DesktopApp),
             "game" => Ok(ProjectType::Game),
             _ => Err("Provided project type is incorrect."),
@@ -71,9 +69,6 @@ impl ProjectType {
             },
             ProjectType::RestApi => {
                 crates_buffer.push(RustCrates::Rocket);
-            },
-            ProjectType::MongodbRepository => {
-                todo!()
             },
             ProjectType::DesktopApp => {
                 todo!()
@@ -95,7 +90,7 @@ impl ProjectType {
                 .write(true)
                 .append(true)
                 .open(format!("{project_path}/src/main.rs"))
-                .expect("Failed to open main.rs file."); 
+                .expect("Failed to open main.rs file.");
             
             main_rs.set_len(0).expect("Failed to clear the main.rs file.");
             main_rs.write_all(new_content.as_bytes())
@@ -108,9 +103,6 @@ impl ProjectType {
             },
             ProjectType::RestApi => {
                 adjust_main_file(project_path, ROCKET_MAIN);
-            },
-            ProjectType::MongodbRepository => {
-                todo!()
             },
             ProjectType::DesktopApp => {
                 todo!()
