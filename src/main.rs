@@ -4,9 +4,11 @@ mod project_type;
 mod file_modification;
 
 use std::env;
+use std::io;
+use std::error::Error;
 
 use project_generator::ProjectGenerator;
-use project_type::ProjectType;
+
 
 
 fn main() {
@@ -20,17 +22,36 @@ fn main() {
             generator.generate_project().expect("Failed to generate project from config.");
         },
         None => {
-            println!("No arguments provided, starting guided setup...");
-            
-            // testing
-            let generator = ProjectGenerator::new(
-                "./generated-project", 
-                ProjectType::Websocket,
-            );
-            generator.generate_project().expect("Failed to generate testing project");
+            let generator = guided_setup().unwrap();
+            generator.generate_project().expect("Failed to generate project based on the given input.");
         },
     }
 
+}
+
+fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
+    println!(r#"
+    #########################################
+    ######## Rust project scaffolder ########
+    #########################################"#
+    );
+    
+    let mut type_buffer = String::new();
+    let mut path_buffer = String::new();
+    
+    println!("\n\nWhat type of project would you like to create? (enter 1 - 4)");
+    println!("    1. websocket");
+    println!("    2. REST-api");
+    println!("    3. desktop app");
+    println!("    4. game");
+    io::stdin().read_line(&mut type_buffer)?;
+    
+    println!("How should the project be called? (Note: you can also pass a full path, default is the current direcory.)\n");
+    io::stdin().read_line(&mut path_buffer)?;
+    
+    println!("Generating project...");
+    let config = Config::new(type_buffer, path_buffer);
+    Ok(ProjectGenerator::from_config(config))
 }
 
 
@@ -42,6 +63,14 @@ pub struct Config {
 }
 
 impl Config {
+    fn new(target_project: String, path: String) -> Config {
+        Config {
+            target_project,
+            path,
+        }
+    }
+    
+    
     fn from_args(args: Vec<String>) -> Option<Config> {
         match args.len() {
             1 => None, 

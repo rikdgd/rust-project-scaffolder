@@ -14,10 +14,18 @@ pub enum ProjectType {
 impl ProjectType {
     pub fn from_str(type_str: &str) -> Result<ProjectType, &'static str> {
         match type_str {
+            "1" => Ok(ProjectType::Websocket),
             "websocket" => Ok(ProjectType::Websocket),
+            
+            "2" => Ok(ProjectType::RestApi),
             "restapi" => Ok(ProjectType::RestApi),
+            
+            "3" => Ok(ProjectType::DesktopApp),
             "desktop" => Ok(ProjectType::DesktopApp),
+            
+            "4" => Ok(ProjectType::Game),
             "game" => Ok(ProjectType::Game),
+            
             _ => Err("Provided project type is incorrect."),
         }
     }
