@@ -30,10 +30,10 @@ fn main() {
 }
 
 fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
-    println!(r#"
-    #########################################
-    ######## Rust project scaffolder ########
-    #########################################"#
+    println!("
+    #########################################\n
+    ######## Rust project scaffolder ########\n
+    #########################################\n"
     );
     
     let mut type_buffer = String::new();
@@ -50,7 +50,12 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     io::stdin().read_line(&mut path_buffer)?;
     
     println!("Generating project...");
-    let config = Config::new(type_buffer, path_buffer);
+    let config = Config::new(
+        type_buffer.trim().to_string(), 
+        path_buffer.trim().to_string()
+    );
+    println!("Creating project with the following settings:\n{:?}", config);
+    
     Ok(ProjectGenerator::from_config(config))
 }
 
