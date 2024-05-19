@@ -8,7 +8,7 @@ use crate::file_modification::*;
 pub enum ProjectType {
     Websocket,
     RestApi,
-    DesktopApp,
+    PixelWindow,
     Game,
 }
 impl ProjectType {
@@ -16,7 +16,7 @@ impl ProjectType {
         match type_str {
             "websocket" => Ok(ProjectType::Websocket),
             "restapi" => Ok(ProjectType::RestApi),
-            "desktop" => Ok(ProjectType::DesktopApp),
+            "pixelwindow" => Ok(ProjectType::PixelWindow),
             "game" => Ok(ProjectType::Game),
             _ => Err("Provided project type is incorrect."),
         }
@@ -32,7 +32,7 @@ impl ProjectType {
             ProjectType::RestApi => {
                 crates_buffer.push(RustCrates::Rocket);
             },
-            ProjectType::DesktopApp => {
+            ProjectType::PixelWindow => {
                 todo!()
             },
             ProjectType::Game => {
@@ -53,7 +53,7 @@ impl ProjectType {
             ProjectType::RestApi => {
                 adjust_main_file(project_path, ROCKET_MAIN);
             },
-            ProjectType::DesktopApp => {
+            ProjectType::PixelWindow => {
                 todo!()
             },
             ProjectType::Game => {

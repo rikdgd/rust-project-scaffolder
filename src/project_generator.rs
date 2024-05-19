@@ -21,8 +21,8 @@ impl ProjectGenerator {
     /// Tries to generate a project from config, if project type was invalid, generates a desktop app.
     pub fn from_config(config: Config) -> ProjectGenerator {
         let project_type = ProjectType::from_str(&config.target_project).unwrap_or_else(|_| {
-            println!("Failed to get the project type, generating default: 'desktop app'.");
-            ProjectType::DesktopApp
+            println!("Failed to get the project type, generating default: 'websocket'.");
+            ProjectType::Websocket
         });
         
         ProjectGenerator {
