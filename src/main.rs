@@ -42,7 +42,7 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     println!("\n\nWhat type of project would you like to create? (enter 1 - 4)");
     println!("    1. websocket");
     println!("    2. REST-api");
-    println!("    3. desktop app");
+    println!("    3. pixel-window");
     println!("    4. game");
     io::stdin().read_line(&mut type_buffer)?;
     

@@ -11,13 +11,6 @@ pub struct ProjectGenerator {
     project_type: ProjectType,
 }
 impl ProjectGenerator {
-    pub fn new(project_path: &str, project_type: ProjectType) -> ProjectGenerator {
-        ProjectGenerator {
-            path: String::from(project_path),
-            project_type
-        }
-    }
-    
     /// Tries to generate a project from config, if project type was invalid, generates a desktop app.
     pub fn from_config(config: Config) -> ProjectGenerator {
         let project_type = ProjectType::from_str(&config.target_project).unwrap_or_else(|_| {
