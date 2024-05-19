@@ -2,7 +2,8 @@ use std::fs::File;
 use std::io::Write;
 
 
-#[allow(unused)]
+// #[allow(unused)]
+#[derive(Debug)]
 pub enum RustCrates {
     Syn,
     Quote,
@@ -19,6 +20,19 @@ pub enum RustCrates {
     WinitInputHelper,
 }
 impl RustCrates {
+    pub fn from_input_str(input: &str) -> Result<RustCrates, &'static str> {
+        match input {
+            "1" => Ok(Self::Syn),
+            "2" => Ok(Self::Quote),
+            "3" => Ok(Self::Libc),
+            "4" => Ok(Self::Rand),
+            "5" => Ok(Self::Serde),
+            "6" => Ok(Self::SerdeJson),
+            "7" => Ok(Self::Bytes),
+            _ => Err("Failed to parse input to rust crate!"),
+        }
+    }
+    
     pub fn get_import_string(&self) -> &str {
         match self {
             Self::Syn => "syn = \"2.0\"",

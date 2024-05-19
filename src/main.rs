@@ -38,6 +38,7 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     
     let mut type_buffer = String::new();
     let mut path_buffer = String::new();
+    let mut crates_buffer = String::new();
     
     println!("\n\nWhat type of project would you like to create? (enter 1 - 4)");
     println!("    1. websocket");
@@ -49,10 +50,16 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     println!("How should the project be called? (Note: you can also pass a full path, default is the current direcory.)\n");
     io::stdin().read_line(&mut path_buffer)?;
     
+    println!("Do you want to add some additional crates?");
+    println!("You can choose crates from the following list, seperated by a ',' \n(example: \"1,4,3\")");
+    println!("1. syn\n2. quote\n3. libc\n4. rand\n5. serde\n6. serde_json\n7. bytes");
+    io::stdin().read_line(&mut crates_buffer)?;
+    
     println!("Generating project...");
     let config = Config::new(
-        type_buffer.trim().to_string(), 
-        path_buffer.trim().to_string()
+        type_buffer.trim().to_string(),
+        path_buffer.trim().to_string(),
+        crates_buffer, // TODO: set to user input...
     );
     println!("Creating project with the following settings:\n{:?}", config);
     
@@ -65,14 +72,23 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
 pub struct Config {
     pub target_project: String,
     pub path: String,
+    pub additional_crates: Option<String>,
 }
 
 impl Config {
-    fn new(target_project: String, path: String) -> Config {
-        Config {
+    ///Creates a new config based on the user input buffers.
+    fn new(target_project: String, path: String, additional_crates: String) -> Config {
+        let mut config = Config {
             target_project,
             path,
+            additional_crates: None,
+        };
+        
+        if !additional_crates.trim().is_empty() {
+            config.additional_crates = Some(additional_crates);
         }
+        
+        config
     }
     
     
@@ -83,6 +99,7 @@ impl Config {
                 Some(Config {
                     target_project: String::from(&args[1]),
                     path: format!("./new-{}-project", &args[1]),
+                    additional_crates: None,
                 })
             },
             3 => {
@@ -93,11 +110,13 @@ impl Config {
                     Some(Config { 
                         target_project: target_project.clone(),
                         path: project_name.clone(),
+                        additional_crates: None,
                     })
                 } else {
                     Some(Config {
                         target_project: target_project.clone(),
                         path: format!("./{}", project_name),
+                        additional_crates: None,
                     })
                 }
             }

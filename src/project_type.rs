@@ -3,7 +3,6 @@ use crate::file_modification::*;
 
 
 
-// TODO: DesktopApp
 #[allow(unused)]
 pub enum ProjectType {
     Websocket,
