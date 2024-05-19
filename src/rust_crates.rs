@@ -14,6 +14,9 @@ pub enum RustCrates {
     Rocket,
     Tungstenite,
     Bevy,
+    Pixels,
+    Winit,
+    WinitInputHelper,
 }
 impl RustCrates {
     pub fn get_import_string(&self) -> &str {
@@ -28,6 +31,9 @@ impl RustCrates {
             Self::Rocket => "rocket = \"0.5.0\"",
             Self::Tungstenite => "tungstenite = \"0.21.0\"",
             Self::Bevy => "bevy = \"0.13.2\"",
+            Self::Pixels => "pixels = \"0.13.0\"",
+            Self::Winit => "winit = \"0.28\"",
+            Self::WinitInputHelper => "winit_input_helper = \"0.14\"",
         }
     }
     
