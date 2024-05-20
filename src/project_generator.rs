@@ -99,10 +99,8 @@ impl ProjectGenerator {
 #[cfg(test)]
 mod tests {
     use crate::rust_crates::RustCrates;
-
     use super::ProjectGenerator;
 
-    // TODO: Write test for parse_crates_string
     #[test]
     fn parse_crates_string_test() {
         let correct_ordered_input = "2,3,4".to_string();
@@ -116,14 +114,13 @@ mod tests {
         let space_seperated_input = "1 3 4".to_string();
         
         
-        
         let correct_ordered_result = ProjectGenerator::parse_crates_string(correct_ordered_input).unwrap();
         let correct_unordered_result = ProjectGenerator::parse_crates_string(correct_unordered_input).unwrap();
         let correct_single_crate_result = ProjectGenerator::parse_crates_string(correct_single_crate_input).unwrap();
         let correct_line_break_result = ProjectGenerator::parse_crates_string(correct_line_break_input).unwrap();
+        let repeat_crate_result = ProjectGenerator::parse_crates_string(repeat_crate_input).unwrap();
         let empty_input_result = ProjectGenerator::parse_crates_string(empty_input).unwrap();
         let line_break_result = ProjectGenerator::parse_crates_string(line_break_input).unwrap();
-        let repeat_crate_result = ProjectGenerator::parse_crates_string(repeat_crate_input).unwrap();
         
         let space_seperated_result = ProjectGenerator::parse_crates_string(space_seperated_input);
         
@@ -132,10 +129,11 @@ mod tests {
         assert_eq!(correct_unordered_result, vec![RustCrates::Syn, RustCrates::Serde, RustCrates::Quote]);
         assert_eq!(correct_single_crate_result, vec![RustCrates::Bytes]);
         assert_eq!(correct_line_break_result, vec![RustCrates::Syn, RustCrates::Quote]);
+        assert_eq!(repeat_crate_result, vec![RustCrates::Syn, RustCrates::Quote, RustCrates::Libc]);
         assert_eq!(empty_input_result, Vec::new());
         assert_eq!(line_break_result, Vec::new());
         
-        if let Ok(crates) = space_seperated_result {
+        if let Ok(_) = space_seperated_result {
             panic!("incorrect user input did not generate an error.");
         }
     }
