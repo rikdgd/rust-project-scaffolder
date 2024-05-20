@@ -3,7 +3,7 @@ use std::io::Write;
 
 
 // #[allow(unused)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum RustCrates {
     Syn,
     Quote,
