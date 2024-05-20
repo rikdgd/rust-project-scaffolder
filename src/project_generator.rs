@@ -103,6 +103,7 @@ mod tests {
 
     #[test]
     fn parse_crates_string_test() {
+        // Should succeed
         let correct_ordered_input = "2,3,4".to_string();
         let correct_unordered_input = "1,5,2".to_string();
         let correct_single_crate_input = "7".to_string();
@@ -111,7 +112,11 @@ mod tests {
         let line_break_input = "\n".to_string();
         let repeat_crate_input = "1,2,3,2".to_string();
         
+        // Should return Err
         let space_seperated_input = "1 3 4".to_string();
+        let random_input = "hdvfn nvfn  988 8fhs\nf".to_string();
+        let non_number_input = "t,w,y,7,f,d,2".to_string();
+        
         
         
         let correct_ordered_result = ProjectGenerator::parse_crates_string(correct_ordered_input).unwrap();
@@ -123,6 +128,14 @@ mod tests {
         let line_break_result = ProjectGenerator::parse_crates_string(line_break_input).unwrap();
         
         let space_seperated_result = ProjectGenerator::parse_crates_string(space_seperated_input);
+        let random_result = ProjectGenerator::parse_crates_string(random_input);
+        let non_number_result = ProjectGenerator::parse_crates_string(non_number_input);
+        let wrong_input_results = [
+            space_seperated_result,
+            random_result,
+            non_number_result,
+        ];
+        
         
         
         assert_eq!(correct_ordered_result, vec![RustCrates::Quote, RustCrates::Libc, RustCrates::Rand]);
@@ -133,8 +146,10 @@ mod tests {
         assert_eq!(empty_input_result, Vec::new());
         assert_eq!(line_break_result, Vec::new());
         
-        if let Ok(_) = space_seperated_result {
-            panic!("incorrect user input did not generate an error.");
+        for result in wrong_input_results {
+            if let Ok(_) = result {
+                panic!("Incorrect user input did not generate an error.");
+            }
         }
     }
 }
