@@ -83,7 +83,7 @@ impl ProjectGenerator {
     fn append_required_crates(&self) -> Result<(), Box<dyn Error>> {
         let mut required_crates = self.project_type.get_required_crates();
         for rust_crate in &self.additional_crates {
-            required_crates.push(rust_crate.clone());
+            required_crates.push(*rust_crate);
         }
         let mut cargo_toml = OpenOptions::new()
             .write(true)
