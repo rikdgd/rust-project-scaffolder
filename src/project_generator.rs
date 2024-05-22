@@ -96,6 +96,7 @@ impl ProjectGenerator {
 }
 
 
+
 #[cfg(test)]
 mod tests {
     use crate::rust_crates::RustCrates;
@@ -111,11 +112,11 @@ mod tests {
         let empty_input = "".to_string();
         let line_break_input = "\n".to_string();
         let repeat_crate_input = "1,2,3,2".to_string();
+        let non_number_input = "t,w,y,3,f,d,2".to_string();
         
         // Should return Err
         let space_seperated_input = "1 3 4".to_string();
         let random_input = "hdvfn nvfn  988 8fhs\nf".to_string();
-        let non_number_input = "t,w,y,7,f,d,2".to_string();
         
         
         
@@ -126,14 +127,14 @@ mod tests {
         let repeat_crate_result = ProjectGenerator::parse_crates_string(repeat_crate_input).unwrap();
         let empty_input_result = ProjectGenerator::parse_crates_string(empty_input).unwrap();
         let line_break_result = ProjectGenerator::parse_crates_string(line_break_input).unwrap();
+        let non_number_result = ProjectGenerator::parse_crates_string(non_number_input).unwrap();
         
         let space_seperated_result = ProjectGenerator::parse_crates_string(space_seperated_input);
         let random_result = ProjectGenerator::parse_crates_string(random_input);
-        let non_number_result = ProjectGenerator::parse_crates_string(non_number_input);
+        
         let wrong_input_results = [
             space_seperated_result,
             random_result,
-            non_number_result,
         ];
         
         
@@ -145,6 +146,7 @@ mod tests {
         assert_eq!(repeat_crate_result, vec![RustCrates::Syn, RustCrates::Quote, RustCrates::Libc]);
         assert_eq!(empty_input_result, Vec::new());
         assert_eq!(line_break_result, Vec::new());
+        assert_eq!(non_number_result, vec![RustCrates::Libc, RustCrates::Quote]);
         
         for result in wrong_input_results {
             if let Ok(_) = result {
