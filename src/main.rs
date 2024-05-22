@@ -31,9 +31,9 @@ fn main() {
 
 fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     println!("
-    #########################################\n
-    ######## Rust project scaffolder ########\n
-    #########################################\n"
+    #########################################
+    ######## Rust project scaffolder ########
+    #########################################"
     );
     
     let mut type_buffer = String::new();

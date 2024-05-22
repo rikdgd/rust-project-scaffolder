@@ -35,9 +35,9 @@ impl ProjectGenerator {
     
     fn parse_crates_string(crates_string: String) -> Result<Vec<RustCrates>, &'static str> {
         let cleaned_crates = crates_string.trim().to_string();
-        let seperator = ',';
+        let separator = ',';
         
-        let crate_numbers: Vec<&str> = cleaned_crates.split(seperator).collect();
+        let crate_numbers: Vec<&str> = cleaned_crates.split(separator).collect();
         let mut crates_buffer: Vec<RustCrates> = Vec::new();
         
         for crate_nr in crate_numbers {
@@ -81,7 +81,10 @@ impl ProjectGenerator {
     }
     
     fn append_required_crates(&self) -> Result<(), Box<dyn Error>> {
-        let required_crates = self.project_type.get_required_crates();
+        let mut required_crates = self.project_type.get_required_crates();
+        for rust_crate in &self.additional_crates {
+            required_crates.push(rust_crate.clone());
+        }
         let mut cargo_toml = OpenOptions::new()
             .write(true)
             .append(true)

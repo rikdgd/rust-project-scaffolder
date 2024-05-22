@@ -2,8 +2,8 @@ use std::fs::File;
 use std::io::Write;
 
 
-// #[allow(unused)]
-#[derive(Debug, PartialEq)]
+
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum RustCrates {
     Syn,
     Quote,
