@@ -152,7 +152,7 @@ mod tests {
         assert_eq!(non_number_result, vec![RustCrates::Libc, RustCrates::Quote]);
         
         for result in wrong_input_results {
-            if let Ok(_) = result {
+            if result.is_ok() {
                 panic!("Incorrect user input did not generate an error.");
             }
         }
