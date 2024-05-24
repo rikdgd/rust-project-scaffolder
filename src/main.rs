@@ -119,6 +119,25 @@ impl Config {
                         additional_crates: None,
                     })
                 }
+            },
+            4 => {
+                let target_project = &args[1];
+                let project_name = &args[2];
+                let additional_crates = &args[3];
+
+                if project_name.starts_with('.') || project_name.starts_with('/') {
+                    Some(Config {
+                        target_project: target_project.clone(),
+                        path: project_name.clone(),
+                        additional_crates: Some(additional_crates.to_string()),
+                    })
+                } else {
+                    Some(Config {
+                        target_project: target_project.clone(),
+                        path: format!("./{}", project_name),
+                        additional_crates: Some(additional_crates.to_string()),
+                    })
+                }
             }
             _ => None,
         }

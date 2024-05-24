@@ -22,7 +22,7 @@ impl ProjectGenerator {
         
         let mut additional_crates: Vec<RustCrates> = Vec::new();
         if let Some(crates_string) = config.additional_crates {
-            additional_crates = ProjectGenerator::parse_crates_string(crates_string).unwrap();
+            additional_crates = ProjectGenerator::parse_crates_string(crates_string);
         }
         
         ProjectGenerator {
@@ -33,26 +33,27 @@ impl ProjectGenerator {
     }
     
     
-    fn parse_crates_string(crates_string: String) -> Result<Vec<RustCrates>, &'static str> {
-        let cleaned_crates = crates_string.trim().to_string();
+    fn parse_crates_string(crates_str: String) -> Vec<RustCrates> {
         let separator = ',';
+        let crates_vec: Vec<&str> = crates_str
+            .trim()
+            .split(separator)
+            .collect();
         
-        let crate_numbers: Vec<&str> = cleaned_crates.split(separator).collect();
         let mut crates_buffer: Vec<RustCrates> = Vec::new();
-        
-        for crate_nr in crate_numbers {
-            if crate_nr.len() > 1 {
-                return Err("Crates input string was incorrectly formatted.");
+        for crate_str in crates_vec {
+            if crate_str.is_empty() {
+                continue;
             }
-            
-            if let Ok(rust_crate) = RustCrates::from_input_str(crate_nr) {
+
+            if let Ok(rust_crate) = RustCrates::from_input_str(crate_str) {
                 if !crates_buffer.contains(&rust_crate) {
                     crates_buffer.push(rust_crate);
                 }
             }
         }
         
-        Ok(crates_buffer)
+        crates_buffer
     }
     
     
@@ -123,22 +124,17 @@ mod tests {
         
         
         
-        let correct_ordered_result = ProjectGenerator::parse_crates_string(correct_ordered_input).unwrap();
-        let correct_unordered_result = ProjectGenerator::parse_crates_string(correct_unordered_input).unwrap();
-        let correct_single_crate_result = ProjectGenerator::parse_crates_string(correct_single_crate_input).unwrap();
-        let correct_line_break_result = ProjectGenerator::parse_crates_string(correct_line_break_input).unwrap();
-        let repeat_crate_result = ProjectGenerator::parse_crates_string(repeat_crate_input).unwrap();
-        let empty_input_result = ProjectGenerator::parse_crates_string(empty_input).unwrap();
-        let line_break_result = ProjectGenerator::parse_crates_string(line_break_input).unwrap();
-        let non_number_result = ProjectGenerator::parse_crates_string(non_number_input).unwrap();
+        let correct_ordered_result = ProjectGenerator::parse_crates_string(correct_ordered_input);
+        let correct_unordered_result = ProjectGenerator::parse_crates_string(correct_unordered_input);
+        let correct_single_crate_result = ProjectGenerator::parse_crates_string(correct_single_crate_input);
+        let correct_line_break_result = ProjectGenerator::parse_crates_string(correct_line_break_input);
+        let repeat_crate_result = ProjectGenerator::parse_crates_string(repeat_crate_input);
+        let empty_input_result = ProjectGenerator::parse_crates_string(empty_input);
+        let line_break_result = ProjectGenerator::parse_crates_string(line_break_input);
+        let non_number_result = ProjectGenerator::parse_crates_string(non_number_input);
         
         let space_seperated_result = ProjectGenerator::parse_crates_string(space_seperated_input);
         let random_result = ProjectGenerator::parse_crates_string(random_input);
-        
-        let wrong_input_results = [
-            space_seperated_result,
-            random_result,
-        ];
         
         
         
@@ -151,10 +147,7 @@ mod tests {
         assert_eq!(line_break_result, Vec::new());
         assert_eq!(non_number_result, vec![RustCrates::Libc, RustCrates::Quote]);
         
-        for result in wrong_input_results {
-            if let Ok(_) = result {
-                panic!("Incorrect user input did not generate an error.");
-            }
-        }
+        assert_eq!(space_seperated_result, Vec::new());
+        assert_eq!(random_result, Vec::new());
     }
 }

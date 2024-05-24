@@ -23,12 +23,26 @@ impl RustCrates {
     pub fn from_input_str(input: &str) -> Result<RustCrates, &'static str> {
         match input {
             "1" => Ok(Self::Syn),
+            "syn" => Ok(Self::Syn),
+            
             "2" => Ok(Self::Quote),
+            "quote" => Ok(Self::Quote),
+            
             "3" => Ok(Self::Libc),
+            "libc" => Ok(Self::Libc),
+            
             "4" => Ok(Self::Rand),
+            "rand" => Ok(Self::Rand),
+            
             "5" => Ok(Self::Serde),
+            "serde" => Ok(Self::Serde),
+            
             "6" => Ok(Self::SerdeJson),
+            "serde_json" => Ok(Self::SerdeJson),
+            
             "7" => Ok(Self::Bytes),
+            "bytes" => Ok(Self::Bytes),
+            
             _ => Err("Failed to parse input to rust crate!"),
         }
     }
