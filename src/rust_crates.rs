@@ -14,10 +14,7 @@ pub enum RustCrates {
     Bytes,
     Rocket,
     Tungstenite,
-    Bevy,
-    Pixels,
-    Winit,
-    WinitInputHelper,
+    Macroquad,
 }
 impl RustCrates {
     pub fn from_input_str(input: &str) -> Result<RustCrates, &'static str> {
@@ -44,10 +41,7 @@ impl RustCrates {
             Self::Bytes => "bytes = \"1\"",
             Self::Rocket => "rocket = \"0.5.0\"",
             Self::Tungstenite => "tungstenite = \"0.21.0\"",
-            Self::Bevy => "bevy = \"0.13.2\"",
-            Self::Pixels => "pixels = \"0.13.0\"",
-            Self::Winit => "winit = \"0.28\"",
-            Self::WinitInputHelper => "winit_input_helper = \"0.14\"",
+            Self::Macroquad => "macroquad = \"0.4\"",
         }
     }
     
