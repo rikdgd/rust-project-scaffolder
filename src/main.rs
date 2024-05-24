@@ -40,18 +40,18 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     let mut path_buffer = String::new();
     let mut crates_buffer = String::new();
     
-    println!("\n\nWhat type of project would you like to create? (enter 1 - 4)");
+    println!("\n\n\nWhat type of project would you like to create? (enter 1 - 4)");
     println!("    1. websocket");
     println!("    2. REST-api");
     println!("    3. pixel-window");
     println!("    4. game");
     io::stdin().read_line(&mut type_buffer)?;
     
-    println!("How should the project be called? (Note: you can also pass a full path, default is the current direcory.)\n");
+    println!("\n\n\nHow should the project be called? (Note: you can also pass a full path, default is the current direcory.)\n");
     io::stdin().read_line(&mut path_buffer)?;
     
-    println!("Do you want to add some additional crates?");
-    println!("You can choose crates from the following list, seperated by a ',' \n(example: \"1,4,3\")");
+    println!("\n\n\nDo you want to add some additional crates?");
+    println!("You can choose crates from the following list, seperated by a ',' \nexample: \"1,4,3\", \"syn,quote\", \"1,serde\"");
     println!("1. syn\n2. quote\n3. libc\n4. rand\n5. serde\n6. serde_json\n7. bytes");
     io::stdin().read_line(&mut crates_buffer)?;
     
@@ -59,7 +59,7 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     let config = Config::new(
         type_buffer.trim().to_string(),
         path_buffer.trim().to_string(),
-        crates_buffer, // TODO: set to user input...
+        crates_buffer,
     );
     println!("Creating project with the following settings:\n{:?}", config);
     
