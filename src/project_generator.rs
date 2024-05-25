@@ -57,8 +57,15 @@ impl ProjectGenerator {
     }
     
     
-    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {    
-        self.create_vanilla_project()?;
+    pub fn generate_project(&self) -> Result<(), Box<dyn Error>> {
+        match self.project_type {
+            ProjectType::ProcMacro => {
+                self.create_vanilla_project(true)?;
+            },
+            _ => {
+                self.create_vanilla_project(false)?;
+            }
+        }
         self.append_required_crates()?;
         
         self.project_type.adjust_source_files(&self.path);
@@ -66,10 +73,14 @@ impl ProjectGenerator {
         Ok(())
     }
     
-    fn create_vanilla_project(&self) -> Result<(), &'static str> {
+    fn create_vanilla_project(&self, is_lib: bool) -> Result<(), &'static str> {
+        let project_type_arg = match is_lib {
+            true => "--lib",
+            false => "--bin",
+        };
         let output = {
             Command::new("cargo")
-            .arg("new").arg(&self.path)
+            .arg("new").arg(&self.path).arg(project_type_arg)
             .output()
         };
         

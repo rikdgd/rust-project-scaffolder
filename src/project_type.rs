@@ -5,6 +5,7 @@ use crate::file_modification::*;
 
 #[allow(unused)]
 pub enum ProjectType {
+    ProcMacro,
     Websocket,
     RestApi,
     Game,
@@ -12,13 +13,16 @@ pub enum ProjectType {
 impl ProjectType {
     pub fn from_str(type_str: &str) -> Result<ProjectType, &'static str> {
         match type_str {
-            "1" => Ok(ProjectType::Websocket),
+            "1" => Ok(Self::ProcMacro),
+            "proc-macro" => Ok(Self::ProcMacro),
+            
+            "2" => Ok(ProjectType::Websocket),
             "websocket" => Ok(ProjectType::Websocket),
             
-            "2" => Ok(ProjectType::RestApi),
+            "3" => Ok(ProjectType::RestApi),
             "restapi" => Ok(ProjectType::RestApi),
             
-            "3" => Ok(ProjectType::Game),
+            "4" => Ok(ProjectType::Game),
             "game" => Ok(ProjectType::Game),
             
             _ => Err("Provided project type is incorrect."),
@@ -29,6 +33,10 @@ impl ProjectType {
         let mut crates_buffer: Vec<RustCrates> = Vec::new();
         
         match self {
+            ProjectType::ProcMacro => {
+                crates_buffer.push(RustCrates::Syn);
+                crates_buffer.push(RustCrates::Quote);
+            },
             ProjectType::Websocket => {
                 crates_buffer.push(RustCrates::Tungstenite);
             },
@@ -47,14 +55,18 @@ impl ProjectType {
         println!("Adjusting source file for: '{project_path}'");
         
         match self {
+            ProjectType::ProcMacro => {
+                adjust_main_file(project_path, "temp", true).expect("Failed to adjust main.rs file.");
+                adjust_proc_macro(project_path).expect("Failed to adjust Cargo.toml file.");
+            },
             ProjectType::Websocket => {
-                adjust_main_file(project_path, TUNGSTENITE_MAIN);
+                adjust_main_file(project_path, TUNGSTENITE_MAIN, false).expect("Failed to adjust main.rs file.");
             },
             ProjectType::RestApi => {
-                adjust_main_file(project_path, ROCKET_MAIN);
+                adjust_main_file(project_path, ROCKET_MAIN, false).expect("Failed to adjust main.rs file.");
             },
             ProjectType::Game => {
-                adjust_main_file(project_path, MACROQUAD_MAIN);
+                adjust_main_file(project_path, MACROQUAD_MAIN, false).expect("Failed to adjust main.rs file.");
             },
         }        
     }
