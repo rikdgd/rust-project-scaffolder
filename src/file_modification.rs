@@ -14,13 +14,3 @@ pub fn adjust_main_file(project_path: &str, new_content: &str) {
     main_rs.write_all(new_content.as_bytes())
         .expect("Failed to adjust main.rs file.");
 }
-
-pub fn append_to_cargo_toml(project_path: &str, new_content: &str) {
-    let mut cargo_toml = OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open(format!("{}/Cargo.toml", project_path))
-        .expect("Failed to open 'Cargo.toml' file.");
-    
-    cargo_toml.write_all(new_content.as_bytes()).expect("Failed to write to 'Cargo.toml' file.");
-}
