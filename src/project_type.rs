@@ -3,21 +3,24 @@ use crate::file_modification::*;
 
 
 
-// TODO: DesktopApp
 #[allow(unused)]
 pub enum ProjectType {
     Websocket,
     RestApi,
-    DesktopApp,
     Game,
 }
 impl ProjectType {
     pub fn from_str(type_str: &str) -> Result<ProjectType, &'static str> {
         match type_str {
+            "1" => Ok(ProjectType::Websocket),
             "websocket" => Ok(ProjectType::Websocket),
+            
+            "2" => Ok(ProjectType::RestApi),
             "restapi" => Ok(ProjectType::RestApi),
-            "desktop" => Ok(ProjectType::DesktopApp),
+            
+            "3" => Ok(ProjectType::Game),
             "game" => Ok(ProjectType::Game),
+            
             _ => Err("Provided project type is incorrect."),
         }
     }
@@ -32,11 +35,8 @@ impl ProjectType {
             ProjectType::RestApi => {
                 crates_buffer.push(RustCrates::Rocket);
             },
-            ProjectType::DesktopApp => {
-                todo!()
-            },
             ProjectType::Game => {
-                crates_buffer.push(RustCrates::Bevy);
+                crates_buffer.push(RustCrates::Macroquad);
             },
         }
         
@@ -53,12 +53,8 @@ impl ProjectType {
             ProjectType::RestApi => {
                 adjust_main_file(project_path, ROCKET_MAIN);
             },
-            ProjectType::DesktopApp => {
-                todo!()
-            },
             ProjectType::Game => {
-                adjust_main_file(project_path, BEVY_MAIN);
-                append_to_cargo_toml(project_path, BEVY_OPTIMIZATION);
+                adjust_main_file(project_path, MACROQUAD_MAIN);
             },
         }        
     }
@@ -106,22 +102,19 @@ fn rocket() -> _ {
 "#;
 
 
-const BEVY_MAIN: &str = r#"use bevy::prelude::*;
+const MACROQUAD_MAIN: &str = r#"use macroquad::prelude::*;
 
-fn main(){
-  App::new()
-    .add_plugins(DefaultPlugins)
-    .run();
+#[macroquad::main("BasicShapes")]
+async fn main() {
+    loop {
+        clear_background(LIGHTGRAY);
+
+        draw_line(40.0, 40.0, 100.0, 200.0, 15.0, BLUE);
+        draw_rectangle(screen_width() / 2.0 - 60.0, 100.0, 120.0, 60.0, GREEN);
+        draw_circle(screen_width() - 30.0, screen_height() - 30.0, 15.0, YELLOW);
+
+        draw_text("HELLO", 20.0, 20.0, 30.0, DARKGRAY);
+
+        next_frame().await
+    }
 }"#;
-
-
-const BEVY_OPTIMIZATION: &str = r#"
-
-# Enable a small amount of optimization in debug mode
-[profile.dev]
-opt-level = 1
-
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package."*"]
-opt-level = 3
-"#;
