@@ -49,12 +49,12 @@ impl RustCrates {
             Self::Syn => "syn = \"2.0\"",
             Self::Quote => "quote = \"1.0\"",
             Self::Libc => "libc = \"0.2\"",
-            Self::Rand => "rand = \"0.8.4\"",
+            Self::Rand => "rand = \"0.8\"",
             Self::Serde => "serde = { version = \"1.0\", features = [\"derive\"] }",
             Self::SerdeJson => "serde_json = \"1.0\"",
             Self::Bytes => "bytes = \"1\"",
-            Self::Rocket => "rocket = \"0.5.0\"",
-            Self::Tungstenite => "tungstenite = \"0.21.0\"",
+            Self::Rocket => "rocket = \"0.5\"",
+            Self::Tungstenite => "tungstenite = \"0.21\"",
             Self::Macroquad => "macroquad = \"0.4\"",
         }
     }
