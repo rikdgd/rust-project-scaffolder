@@ -41,9 +41,10 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     let mut crates_buffer = String::new();
     
     println!("\n\n\nWhat type of project would you like to create? (enter 1 - 3)");
-    println!("    1. websocket");
-    println!("    2. REST-api");
-    println!("    3. game");
+    println!("    1. proc-macro");
+    println!("    2. websocket");
+    println!("    3. REST-api");
+    println!("    4. game");
     io::stdin().read_line(&mut type_buffer)?;
     
     println!("\n\n\nHow should the project be called? (Note: you can also pass a full path, default is the current direcory.)\n");

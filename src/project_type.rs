@@ -52,21 +52,22 @@ impl ProjectType {
     }
     
     pub fn adjust_source_files(&self, project_path: &str) {
+        let adjust_main_err = "Failed to adjust main.rs/lib.rs file.";
         println!("Adjusting source file for: '{project_path}'");
         
         match self {
             ProjectType::ProcMacro => {
-                adjust_main_file(project_path, "temp", true).expect("Failed to adjust main.rs file.");
+                adjust_main_file(project_path, PROC_MACRO_MAIN, true).expect(adjust_main_err);
                 adjust_proc_macro(project_path).expect("Failed to adjust Cargo.toml file.");
             },
             ProjectType::Websocket => {
-                adjust_main_file(project_path, TUNGSTENITE_MAIN, false).expect("Failed to adjust main.rs file.");
+                adjust_main_file(project_path, TUNGSTENITE_MAIN, false).expect(adjust_main_err);
             },
             ProjectType::RestApi => {
-                adjust_main_file(project_path, ROCKET_MAIN, false).expect("Failed to adjust main.rs file.");
+                adjust_main_file(project_path, ROCKET_MAIN, false).expect(adjust_main_err);
             },
             ProjectType::Game => {
-                adjust_main_file(project_path, MACROQUAD_MAIN, false).expect("Failed to adjust main.rs file.");
+                adjust_main_file(project_path, MACROQUAD_MAIN, false).expect(adjust_main_err);
             },
         }        
     }
@@ -74,6 +75,30 @@ impl ProjectType {
     
 }
 
+
+
+const PROC_MACRO_MAIN: &str = r#"use proc_macro::TokenStream;
+use quote::quote;
+use syn;
+
+#[proc_macro_derive(HelloMacro)]
+pub fn hello_macro_derive(input: TokenStream) -> TokenStream {
+    let ast = syn::parse(input).unwrap();
+    impl_hello_macro(&ast)
+}
+
+fn impl_hello_macro(ast: &syn::DeriveInput) -> TokenStream {
+    let name = &ast.ident;
+    let gen = quote! {
+        impl HelloMacro for #name {
+            fn hello_macro() {
+                println!("Hello, Macro! My name is {}!", stringify!(#name));
+            }
+        }
+    };
+    gen.into()
+}
+"#;
 
 
 const TUNGSTENITE_MAIN: &str = r#"use std::net::TcpListener;
