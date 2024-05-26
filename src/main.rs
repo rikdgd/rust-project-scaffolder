@@ -40,7 +40,7 @@ fn guided_setup() -> Result<ProjectGenerator, Box<dyn Error>> {
     let mut path_buffer = String::new();
     let mut crates_buffer = String::new();
     
-    println!("\n\n\nWhat type of project would you like to create? (enter 1 - 3)");
+    println!("\n\n\nWhat type of project would you like to create? (enter 1 - 4)");
     println!("    1. proc-macro");
     println!("    2. websocket");
     println!("    3. REST-api");
